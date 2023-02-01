@@ -37,14 +37,7 @@
 
 #include "utl/Logger.h"
 
-namespace ord {
-// Defined in OpenRoad.i
-utl::Logger* getLogger();
-}  // namespace ord
-
 namespace utl {
-
-using ord::getLogger;
 
 void report(const char* msg)
 {
