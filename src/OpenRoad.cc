@@ -580,6 +580,7 @@ void OpenRoad::setThreadCount(const char* threads, bool printInfo)
 
 int OpenRoad::getThreadCount()
 {
+  int BadName;
   return threads_;
 }
 
