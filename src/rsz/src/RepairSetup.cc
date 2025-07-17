@@ -181,6 +181,36 @@ bool RepairSetup::repairSetup(const float setup_slack_margin,
                    [](const auto& end_slack1, const auto& end_slack2) {
                      return end_slack1.second < end_slack2.second;
                    });
+
+  // Ethan's code
+  std::map<std::string, int> histogram;
+  for (auto& [vertex, slack] : violating_ends) {
+    sta::Path* path = sta_->vertexWorstSlackPath(vertex, max_);
+    PathExpanded expanded(path, sta_);
+    for (int i = 0; i < expanded.size(); i++) {
+      sta::Path* worst_path_element = expanded.path(i);
+      sta::Pin* worst_pin = worst_path_element->pin(sta_);
+      sta::Instance* inst = network_->instance(worst_pin);
+      std::string name = network_->name(inst);
+      if (histogram.find(name) == histogram.end()) {
+        histogram.emplace(name, 1);
+      } else {
+        histogram.emplace(name, histogram.at(name) + 1);
+      }
+    }
+  }
+  std::vector<std::pair<std::string, int>> histogram_elements;
+  for (auto& [name, count] : histogram) {
+    histogram_elements.emplace_back(name, count);
+  }
+
+  std::sort(histogram_elements.begin(),
+            histogram_elements.end(),
+            [](const auto& a, const auto& b) {
+              return b.second < a.second;
+            });
+  // PathExpanded
+  //  End Ethan's code
   debugPrint(logger_,
              RSZ,
              "repair_setup",
